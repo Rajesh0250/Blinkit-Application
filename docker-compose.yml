@@ -1,0 +1,94 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: blinkit-postgres
+    environment:
+      POSTGRES_DB: blinkitdb
+      POSTGRES_USER: blinkit
+      POSTGRES_PASSWORD: blinkitpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+    container_name: blinkit-auth-service
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: blinkitdb
+      DB_USER: blinkit
+      DB_PASSWORD: blinkitpass
+    depends_on:
+      - postgres
+    ports:
+      - "3001:3001"
+
+  catalog-service:
+    build:
+      context: ./services/catalog-service
+    container_name: blinkit-catalog-service
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: blinkitdb
+      DB_USER: blinkit
+      DB_PASSWORD: blinkitpass
+    depends_on:
+      - postgres
+    ports:
+      - "3002:3002"
+
+  orders-service:
+    build:
+      context: ./services/orders-service
+    container_name: blinkit-orders-service
+    environment:
+      PORT: 3003
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: blinkitdb
+      DB_USER: blinkit
+      DB_PASSWORD: blinkitpass
+    depends_on:
+      - postgres
+    ports:
+      - "3003:3003"
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+    container_name: blinkit-api-gateway
+    environment:
+      PORT: 3005
+      AUTH_SERVICE_URL: http://auth-service:3001
+      CATALOG_SERVICE_URL: http://catalog-service:3002
+      ORDERS_SERVICE_URL: http://orders-service:3003
+    depends_on:
+      - auth-service
+      - catalog-service
+      - orders-service
+    ports:
+      - "3005:3005"
+
+  frontend:
+    build:
+      context: ./services/frontend
+    container_name: blinkit-frontend
+    environment:
+      PORT: 3000
+      API_GATEWAY_URL: http://api-gateway:3005
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres-data:

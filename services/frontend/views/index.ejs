@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blinkit Demo</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; background: #f6fff8; color: #183a1d; }
+      .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+      .hero { background: linear-gradient(90deg, #2ecc71, #27ae60); color: white; padding: 24px; border-radius: 16px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 20px; }
+      .card { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+      button { background: #2ecc71; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; }
+      .pill { display: inline-block; background: #eafbf0; color: #1b5e20; border-radius: 999px; padding: 4px 8px; font-size: 12px; margin-bottom: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="hero">
+        <h1>Welcome to Blinkit-style Grocery Delivery</h1>
+        <p>Fast delivery, multiple services, and a Kubernetes-ready microservice architecture.</p>
+      </div>
+
+      <h2>Featured products</h2>
+      <div class="grid">
+        <% products.forEach(product => { %>
+          <div class="card">
+            <span class="pill"><%= product.category %></span>
+            <h3><%= product.name %></h3>
+            <p>Price: $<%= product.price %></p>
+            <p>Stock: <%= product.stock %></p>
+            <button onclick="placeOrder('<%= product.name %>', <%= product.price %>)">Quick add</button>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h3>Login demo</h3>
+        <input id="username" placeholder="demo" /><br/><br/>
+        <input id="password" placeholder="demo123" type="password" /><br/><br/>
+        <button onclick="loginUser()">Sign in</button>
+        <pre id="result" style="margin-top: 12px;"></pre>
+      </div>
+    </div>
+
+    <script>
+      async function loginUser() {
+        const payload = { username: document.getElementById('username').value, password: document.getElementById('password').value };
+        const res = await fetch('/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json();
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+      }
+
+      async function placeOrder(name, price) {
+        const payload = { customerName: 'Demo Customer', items: [{ name, price }], total: price };
+        const res = await fetch('/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json();
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+      }
+    </script>
+  </body>
+</html>
