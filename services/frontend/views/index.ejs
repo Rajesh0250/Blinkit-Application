@@ -63,6 +63,17 @@
 
       <div class="layout">
         <div>
+          <div class="card" style="margin-bottom: 16px;">
+            <h3>Login / Register</h3>
+            <input id="username" placeholder="Username" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="password" type="password" placeholder="Password" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="add-btn" style="width:auto;" onclick="loginUser()">Login</button>
+              <button class="checkout-btn" style="width:auto;" onclick="registerUser()">Register</button>
+            </div>
+            <div id="authMessage" class="toast" style="display:none"></div>
+          </div>
+
           <h2 class="section-title">Shop by category</h2>
           <div class="section-row">
             <a class="tag" href="/category/All" style="text-decoration:none;">🛍️ All</a>
@@ -72,6 +83,15 @@
             <a class="tag" href="/category/Pharmacy" style="text-decoration:none;">💊 Pharmacy</a>
             <a class="tag" href="/category/Kitchen%20Essentials" style="text-decoration:none;">🍳 Kitchen Essentials</a>
             <a class="tag" href="/category/Household" style="text-decoration:none;">🧴 Household</a>
+          </div>
+
+          <div class="section-row" style="margin-top: 8px;">
+            <a class="tag" href="/service/user-service" style="text-decoration:none;">👤 User Service</a>
+            <a class="tag" href="/service/profile-service" style="text-decoration:none;">🧾 Profile Service</a>
+            <a class="tag" href="/service/address-service" style="text-decoration:none;">📍 Address Service</a>
+            <a class="tag" href="/service/catalog-service" style="text-decoration:none;">🧺 Catalog Service</a>
+            <a class="tag" href="/service/cart-service" style="text-decoration:none;">🛒 Cart Service</a>
+            <a class="tag" href="/service/payment-service" style="text-decoration:none;">💳 Payment Service</a>
           </div>
           <% if (selectedCategory && selectedCategory !== 'All') { %>
             <div class="pill" style="margin-bottom: 10px;">Showing: <%= selectedCategory %></div>
@@ -148,6 +168,40 @@
 
     <script>
       const cart = [];
+      let currentToken = '';
+
+      function showAuthMessage(message) {
+        const box = document.getElementById('authMessage');
+        box.textContent = message;
+        box.style.display = 'block';
+      }
+
+      async function loginUser() {
+        const payload = { username: document.getElementById('username').value, password: document.getElementById('password').value };
+        try {
+          const res = await fetch('/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          const data = await res.json();
+          if (data.token) {
+            currentToken = data.token;
+            showAuthMessage(`Logged in as ${data.user.username}`);
+          } else {
+            showAuthMessage(data.message || 'Login failed');
+          }
+        } catch (error) {
+          showAuthMessage('Login failed');
+        }
+      }
+
+      async function registerUser() {
+        const payload = { username: document.getElementById('username').value, password: document.getElementById('password').value };
+        try {
+          const res = await fetch('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          const data = await res.json();
+          showAuthMessage(data.message || 'Registration completed');
+        } catch (error) {
+          showAuthMessage('Registration failed');
+        }
+      }
 
       function addToCart(name, price, category) {
         const existing = cart.find(item => item.name === name);
@@ -157,6 +211,9 @@
           cart.push({ name, price, category, quantity: 1 });
         }
         renderCart();
+        if (currentToken) {
+          fetch('/cart/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, price, category, token: currentToken }) });
+        }
         showMessage(`${name} added to cart`);
       }
 

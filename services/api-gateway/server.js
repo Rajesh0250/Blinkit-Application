@@ -22,6 +22,15 @@ app.post('/auth/login', async (req, res) => {
   }
 });
 
+app.post('/auth/register', async (req, res) => {
+  try {
+    const response = await axios.post(`${authServiceUrl}/auth/register`, req.body);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.get('/catalog/products', async (_req, res) => {
   try {
     const response = await axios.get(`${catalogServiceUrl}/catalog/products`);

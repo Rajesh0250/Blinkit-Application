@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= serviceName %> - Blinkit Microservices</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; background: #f7fff7; color: #183a1d; }
+      .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+      .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-top: 16px; }
+      .btn { display: inline-block; margin-top: 12px; text-decoration: none; padding: 10px 14px; border-radius: 10px; background: linear-gradient(90deg, #00b843, #34c759); color: white; font-weight: 700; }
+      .pill { display: inline-block; background: #e8fff1; color: #1f8e3f; padding: 6px 10px; border-radius: 999px; margin-bottom: 10px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <span class="pill"><%= serviceName %></span>
+        <h1><%= title %></h1>
+        <p><%= description %></p>
+        <p><strong>Status:</strong> Running as a separate container service</p>
+        <a href="/" class="btn">Back to home</a>
+      </div>
+    </div>
+  </body>
+</html>

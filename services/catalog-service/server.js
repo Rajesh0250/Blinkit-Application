@@ -25,9 +25,33 @@ app.get('/health', async (_req, res) => {
   }
 });
 
+const getProductColumns = async () => {
+  try {
+    const result = await pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'products'");
+    return new Set(result.rows.map((row) => row.column_name));
+  } catch (_error) {
+    return new Set();
+  }
+};
+
+const buildProductQuery = async (whereClause = '') => {
+  const columns = await getProductColumns();
+  const selectedColumns = [
+    'id', 'name', 'price', 'category', 'stock'
+  ];
+  if (columns.has('subcategory')) selectedColumns.push('subcategory');
+  if (columns.has('brand')) selectedColumns.push('brand');
+  if (columns.has('unit')) selectedColumns.push('unit');
+  if (columns.has('description')) selectedColumns.push('description');
+  if (columns.has('image_url')) selectedColumns.push('image_url');
+  const columnList = selectedColumns.join(', ');
+  return `SELECT ${columnList} FROM products${whereClause}`;
+};
+
 app.get('/catalog/products', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products ORDER BY id');
+    const query = await buildProductQuery(' ORDER BY id');
+    const result = await pool.query(query);
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -36,7 +60,8 @@ app.get('/catalog/products', async (_req, res) => {
 
 app.get('/catalog/category/:category', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products WHERE category = $1 ORDER BY id', [req.params.category]);
+    const query = await buildProductQuery(' WHERE category = $1 ORDER BY id');
+    const result = await pool.query(query, [req.params.category]);
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -45,7 +70,8 @@ app.get('/catalog/category/:category', async (req, res) => {
 
 app.get('/catalog/products/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products WHERE id = $1', [req.params.id]);
+    const query = await buildProductQuery(' WHERE id = $1');
+    const result = await pool.query(query, [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ message: 'Product not found' });
     res.json(result.rows[0]);
   } catch (error) {

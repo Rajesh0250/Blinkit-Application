@@ -39,10 +39,28 @@ app.post('/auth/login', async (req, res) => {
     }
 
     const user = result.rows[0];
+    const token = `mock-jwt-${user.id}-${Date.now()}`;
+    await pool.query('INSERT INTO sessions (user_id, token) VALUES ($1, $2) ON CONFLICT (token) DO NOTHING', [user.id, token]);
+
     res.json({
-      token: `mock-jwt-${user.id}`,
+      token,
       user: { id: user.id, username: user.username, role: user.role }
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/auth/register', async (req, res) => {
+  const { username, password, role = 'customer' } = req.body;
+  try {
+    const existing = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+    const inserted = await pool.query('INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING id, username, role', [username, password, role]);
+    const user = inserted.rows[0];
+    res.status(201).json({ user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
