@@ -46,22 +46,22 @@ app.get('/cart', (_req, res) => {
 
 app.get('/service/:serviceName', (req, res) => {
   const serviceMap = {
-    'user-service': { title: 'User Service', description: 'Manages customer identity and tenant profile information.' },
-    'profile-service': { title: 'Profile Service', description: 'Stores and retrieves customer profile preferences and details.' },
-    'address-service': { title: 'Address Service', description: 'Handles saved addresses and delivery locations.' },
-    'catalog-service': { title: 'Catalog Service', description: 'Provides the product catalog for groceries, pharmacy, and essentials.' },
-    'search-service': { title: 'Search Service', description: 'Enables fast search across products and categories.' },
-    'inventory-service': { title: 'Inventory Service', description: 'Tracks real-time product availability and stock status.' },
-    'pricing-service': { title: 'Pricing Service', description: 'Calculates pricing, promotions, and discounts.' },
-    'cart-service': { title: 'Cart Service', description: 'Keeps the customer basket state and cart contents.' },
-    'checkout-service': { title: 'Checkout Service', description: 'Handles checkout requests and total calculation.' },
-    'order-service': { title: 'Order Service', description: 'Manages placed orders and order status.' },
-    'payment-service': { title: 'Payment Service', description: 'Initiates secure payment flows for the order.' },
-    'coupon-service': { title: 'Coupon Service', description: 'Applies coupon codes and promotional offers.' },
-    'delivery-slot-service': { title: 'Delivery Slot Service', description: 'Provides available delivery time windows.' },
-    'notification-service': { title: 'Notification Service', description: 'Sends order updates and reminders.' },
-    'rating-review-service': { title: 'Rating Review Service', description: 'Stores feedback for products and delivery experience.' },
-    'customer-support-service': { title: 'Customer Support Service', description: 'Provides help and support links for customers.' }
+    'user-service': { title: 'User Service', description: 'Manages customer identity and tenant profile information.', items: Array.from({ length: 120 }, (_, i) => ({ name: `User Profile ${i + 1}`, detail: 'Registered customer with delivery preferences', badge: 'Active' })) },
+    'profile-service': { title: 'Profile Service', description: 'Stores and retrieves customer profile preferences and details.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Profile ${i + 1}`, detail: 'Saved preference and loyalty profile', badge: 'Personalized' })) },
+    'address-service': { title: 'Address Service', description: 'Handles saved addresses and delivery locations.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Address ${i + 1}`, detail: 'Home / Office / Family location', badge: 'Saved' })) },
+    'catalog-service': { title: 'Catalog Service', description: 'Provides the product catalog for groceries, pharmacy, and essentials.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Catalog Item ${i + 1}`, detail: 'Fresh grocery or pharmacy item', badge: 'In stock' })) },
+    'search-service': { title: 'Search Service', description: 'Enables fast search across products and categories.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Search Result ${i + 1}`, detail: 'Matched keyword and category suggestion', badge: 'Trending' })) },
+    'inventory-service': { title: 'Inventory Service', description: 'Tracks real-time product availability and stock status.', items: Array.from({ length: 120 }, (_, i) => ({ name: `SKU ${i + 1}`, detail: 'Available in warehouse and dark store', badge: 'Ready' })) },
+    'pricing-service': { title: 'Pricing Service', description: 'Calculates pricing, promotions, and discounts.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Offer ${i + 1}`, detail: 'Discounted product pricing and combo deal', badge: 'Discount' })) },
+    'cart-service': { title: 'Cart Service', description: 'Keeps the customer basket state and cart contents.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Cart Item ${i + 1}`, detail: 'Basket item with quantity and price', badge: 'Added' })) },
+    'checkout-service': { title: 'Checkout Service', description: 'Handles checkout requests and total calculation.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Checkout ${i + 1}`, detail: 'Order summary and delivery estimate', badge: 'Processing' })) },
+    'order-service': { title: 'Order Service', description: 'Manages placed orders and order status.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Order ${i + 1}`, detail: 'Confirmed or in progress delivery', badge: 'Confirmed' })) },
+    'payment-service': { title: 'Payment Service', description: 'Initiates secure payment flows for the order.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Payment ${i + 1}`, detail: 'Wallet / UPI / Card mode', badge: 'Secure' })) },
+    'coupon-service': { title: 'Coupon Service', description: 'Applies coupon codes and promotional offers.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Coupon ${i + 1}`, detail: 'Promo code available for order', badge: 'Active' })) },
+    'delivery-slot-service': { title: 'Delivery Slot Service', description: 'Provides available delivery time windows.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Slot ${i + 1}`, detail: 'Fast delivery window and ETA', badge: 'Available' })) },
+    'notification-service': { title: 'Notification Service', description: 'Sends order updates and reminders.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Notification ${i + 1}`, detail: 'Delivery and offer alert', badge: 'New' })) },
+    'rating-review-service': { title: 'Rating Review Service', description: 'Stores feedback for products and delivery experience.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Review ${i + 1}`, detail: 'Customer rating and product feedback', badge: 'Top rated' })) },
+    'customer-support-service': { title: 'Customer Support Service', description: 'Provides help and support links for customers.', items: Array.from({ length: 120 }, (_, i) => ({ name: `Support Case ${i + 1}`, detail: 'Issue resolution and helpdesk data', badge: 'Open' })) }
   };
 
   const service = serviceMap[req.params.serviceName];
@@ -69,7 +69,7 @@ app.get('/service/:serviceName', (req, res) => {
     return res.status(404).send('Service page not found');
   }
 
-  res.render('service-page', { serviceName: req.params.serviceName, title: service.title, description: service.description });
+  res.render('service-page', { serviceName: req.params.serviceName, title: service.title, description: service.description, items: service.items });
 });
 
 app.post('/cart/add', (req, res) => {
