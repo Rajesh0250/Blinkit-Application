@@ -65,12 +65,17 @@
         <div>
           <h2 class="section-title">Shop by category</h2>
           <div class="section-row">
-            <span class="tag">🥭 Fruits</span>
-            <span class="tag">🥬 Vegetables</span>
-            <span class="tag">🛒 Groceries</span>
-            <span class="tag">🍳 Kitchen Essentials</span>
-            <span class="tag">🧴 Household</span>
+            <a class="tag" href="/category/All" style="text-decoration:none;">🛍️ All</a>
+            <a class="tag" href="/category/Fruits" style="text-decoration:none;">🥭 Fruits</a>
+            <a class="tag" href="/category/Vegetables" style="text-decoration:none;">🥬 Vegetables</a>
+            <a class="tag" href="/category/Groceries" style="text-decoration:none;">🛒 Groceries</a>
+            <a class="tag" href="/category/Pharmacy" style="text-decoration:none;">💊 Pharmacy</a>
+            <a class="tag" href="/category/Kitchen%20Essentials" style="text-decoration:none;">🍳 Kitchen Essentials</a>
+            <a class="tag" href="/category/Household" style="text-decoration:none;">🧴 Household</a>
           </div>
+          <% if (selectedCategory && selectedCategory !== 'All') { %>
+            <div class="pill" style="margin-bottom: 10px;">Showing: <%= selectedCategory %></div>
+          <% } %>
 
           <%
             const discountMap = {
@@ -78,6 +83,7 @@
               Fruits: 18,
               Vegetables: 12,
               Groceries: 10,
+              Pharmacy: 15,
               'Kitchen Essentials': 8,
               Household: 7,
               Bakery: 6,
@@ -92,6 +98,7 @@
               Fruits: '🍇',
               Vegetables: '🥕',
               Groceries: '🛒',
+              Pharmacy: '💊',
               'Kitchen Essentials': '🍳',
               Household: '🧴',
               Bakery: '🥖',

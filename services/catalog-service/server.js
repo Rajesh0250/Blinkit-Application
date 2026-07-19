@@ -27,7 +27,16 @@ app.get('/health', async (_req, res) => {
 
 app.get('/catalog/products', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, price, category, stock FROM products ORDER BY id');
+    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products ORDER BY id');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/catalog/category/:category', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products WHERE category = $1 ORDER BY id', [req.params.category]);
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -36,7 +45,7 @@ app.get('/catalog/products', async (_req, res) => {
 
 app.get('/catalog/products/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, price, category, stock FROM products WHERE id = $1', [req.params.id]);
+    const result = await pool.query('SELECT id, name, price, category, subcategory, brand, unit, stock, description, image_url FROM products WHERE id = $1', [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ message: 'Product not found' });
     res.json(result.rows[0]);
   } catch (error) {

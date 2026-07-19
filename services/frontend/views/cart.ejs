@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart - Blinkit</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; background: #fffaf3; color: #183a1d; }
+      .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+      .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 16px; }
+      .btn { padding: 10px 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; }
+      .btn-primary { background: linear-gradient(90deg, #00b843, #34c759); color: white; }
+      .btn-secondary { background: #f4f7f4; color: #183a1d; }
+      .item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e8ebdf; }
+      .price { color: #1f8e3f; font-weight: 700; }
+      .summary { font-size: 20px; font-weight: 700; color: #1f8e3f; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Your cart</h1>
+        <p>Review your fresh groceries and checkout in seconds.</p>
+      </div>
+      <div class="card">
+        <% if (cart && cart.length > 0) { %>
+          <% cart.forEach(item => { %>
+            <div class="item">
+              <div>
+                <strong><%= item.name %></strong><br/>
+                <span><%= item.quantity %> × ₹<%= item.price %></span>
+              </div>
+              <div class="price">₹<%= (item.quantity * item.price).toFixed(2) %></div>
+            </div>
+          <% }) %>
+          <div class="item" style="border-bottom: none; margin-top: 12px;">
+            <div><strong>Total</strong></div>
+            <div class="summary">₹<%= total.toFixed(2) %></div>
+          </div>
+          <a href="/" class="btn btn-secondary" style="display:inline-block; text-decoration:none; margin-top: 10px;">Continue shopping</a>
+          <button class="btn btn-primary" style="margin-top: 10px;">Place order</button>
+        <% } else { %>
+          <p>Your cart is empty.</p>
+          <a href="/" class="btn btn-primary" style="text-decoration:none;">Go back to shop</a>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
